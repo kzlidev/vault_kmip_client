@@ -7,7 +7,7 @@ from kmip.pie import ProxyKmipClient
 from kmip.pie.objects import SymmetricKey
 from cryptography.hazmat.primitives import padding
 
-hostname = "xxx.xxx.xxx.xxx"  # Change this to your Vault server"s hostname
+hostname = "xxx.xxx.xxx.xxx"  # Change this to your Vault server's hostname
 port = 5696  # KMIP port, typically 5696 for Vault
 client_cert_path = "./certs/client_cert.pem"  # Client certificate for mutual TLS (if required)
 client_key_path = "./certs/client_key.pem"  # Client key for mutual TLS (if required)
