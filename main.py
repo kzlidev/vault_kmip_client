@@ -1,5 +1,6 @@
 # Configure your KMIP client to connect to the Vault KMIP endpoint
 import secrets
+import random
 
 from kmip.core import enums
 from kmip.core.enums import CryptographicUsageMask
@@ -36,7 +37,7 @@ def import_key(client, key_material):
         algorithm=enums.CryptographicAlgorithm.AES,  # Encryption algorithm
         length=256,  # Key length in bits
         value=key_material,  # Key material
-        name=f"CustomName{key_material}",
+        name=f"CustomName{random.random()}",
         masks=[CryptographicUsageMask.ENCRYPT, CryptographicUsageMask.DECRYPT]
     )
 
