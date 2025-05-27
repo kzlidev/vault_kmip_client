@@ -8,11 +8,11 @@ from kmip.pie import ProxyKmipClient
 from kmip.pie.objects import SymmetricKey
 from cryptography.hazmat.primitives import padding
 
-hostname = "xxx.xxx.xxx.xxx"  # Change this to your Vault server's hostname
+hostname = "vault.kz-li.sbx.hashidemos.io"  # Change this to your Vault server's hostname
 port = 5696  # KMIP port, typically 5696 for Vault
 client_cert_path = "./certs/client_cert.pem"  # Client certificate for mutual TLS (if required)
 client_key_path = "./certs/client_key.pem"  # Client key for mutual TLS (if required)
-ca_cert_path = "./certs/ca_cert.pem"  # Certificate Authority (CA) certificate
+ca_cert_path = "./certs/kmip_ca.pem"  # Certificate Authority (CA) certificate
 
 plain_text = "hello vault"
 
@@ -57,6 +57,7 @@ def list_keys(client):
         print("Found the following keys:")
         for key_id in key_ids:
             print(f"- {key_id}")
+        return key_ids
     else:
         print("No keys found.")
 
@@ -101,7 +102,7 @@ def decrypt(client, key_id, cipher_text):
     # Unpad decrypted data
     unpadder = padding.PKCS7(64).unpadder()
     decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize()).decode("utf-8")
-  
+
     print(f"Decrypted Data: {decrypted_data}")
     return decrypted_data
 
@@ -119,15 +120,17 @@ client = ProxyKmipClient(
 client.open()
 
 try:
+    print("Performing KMIP operations")
     create_key(client)
 
     key_material = secrets.token_bytes(32)
     import_key(client, key_material)
 
-    list_keys(client)
+    keys = list_keys(client)
 
     # Choose one of the key_id from the listed keys
-    key_id = "baFGnTYaptcRGLpcBbal6tXuS3cPk7P2"
+    key_id = keys[0]
+    print(f"Using {key_id} for encryption and decryption")
     cipher_text = encrypt(client, key_id, plain_text)
     original_text = decrypt(client, key_id, cipher_text)
 finally:
